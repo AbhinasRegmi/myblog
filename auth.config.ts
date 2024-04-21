@@ -11,5 +11,3 @@ export default {
         )
     ]
 } satisfies NextAuthConfig;
-
-// EDGE Compatible...

@@ -1,9 +1,10 @@
 import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from "@/db/schemas";
+import { drizzle } from 'drizzle-orm/postgres-js';
 
 declare module global {
-    let dbClient: ReturnType<typeof postgres> | undefined
+    let dbClient: ReturnType<typeof postgres> | undefined;
+    let dbEdgeClient: any | undefined;
 }
 
 let dbClient;
