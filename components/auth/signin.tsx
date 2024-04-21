@@ -1,13 +1,13 @@
 "use client";
 
-import {useEffect, useTransition} from "react";
+import {useEffect, useTransition, Suspense} from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 
 import { SiginAction } from "@/action/signin";
 import {Spinner} from "@/components/auth/spinner";
 import {SIGNIN_ROUTE} from "@/routes";
 
-export function SignInWithNext(){
+function SignInWithNext_(){
 
     const searchParams = useSearchParams();
     const [, startTransition] = useTransition();
@@ -26,7 +26,15 @@ export function SignInWithNext(){
     )
 }
 
-export function SignInWithPathname(){
+export function SignInWithNext(){
+    return (
+        <Suspense>
+            <SignInWithNext_ />
+        </Suspense>
+    )
+}
+
+function SignInWithPathname_(){
     const pathname = usePathname();
     const [, startTransition] = useTransition();
 
@@ -42,5 +50,13 @@ export function SignInWithPathname(){
 
     return (
         <Spinner />
+    )
+}
+
+export function SignInWithPathname(){
+    return (
+        <Suspense>
+            <SignInWithPathname_ />
+        </Suspense>
     )
 }
