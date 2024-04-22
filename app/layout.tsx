@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${space_grotesk.variable} scroll-smooth`}
+      className={`${space_grotesk.className} scroll-smooth`}
     >
       <body>
         <NavBar />

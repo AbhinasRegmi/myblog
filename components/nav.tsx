@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { Logo } from "@/components/logo";
-import { SearchFormNav } from "@/components/search";
+import { SearchForm } from "@/components/search";
 
 export async function NavBar() {
     return (
@@ -14,7 +14,7 @@ export async function NavBar() {
                     <Logo />
                     <div className="hidden md:block">
                         <Suspense>
-                            <SearchFormNav />
+                            <SearchForm />
                         </Suspense>
                     </div>
                 </div>

@@ -6,18 +6,13 @@ import { useForm } from "react-hook-form";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as z from "zod";
 import { RotateCw } from "lucide-react";
+import Link from "next/link";
 
 import { FormItem, FormField, FormControl, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SearchSchema } from "@/schemas/search";
 import { cn } from "@/lib/utils";
 
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 
 export function SearchForm({
     className,
@@ -77,21 +72,6 @@ export function SearchForm({
     );
 }
 
-export function SearchFormNav() {
-    //TODO: Embed the find page inside dialog content
-    return (
-        <Dialog>
-            <DialogTrigger>
-                <InputCore />
-            </DialogTrigger>
-            <DialogContent>
-                <div className="py-8">
-                    <SearchForm className="w-full" />
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
-}
 
 function InputCore({
     field,
