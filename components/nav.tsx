@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { Logo } from "@/components/logo";
 import { SearchForm } from "@/components/search";
+import {NavMenu} from "@/components/menu";
 
 export async function NavBar() {
     return (
@@ -9,7 +10,7 @@ export async function NavBar() {
         sticky top-0 right-0 left-0 isolate z-10
         bg-white/85 backdrop-blur-sm
         ">
-            <div className="md:container flex">
+            <div className="md:container flex justify-between">
                 <div className="flex items-center gap-1">
                     <Logo />
                     <div className="hidden md:block">
@@ -18,8 +19,10 @@ export async function NavBar() {
                         </Suspense>
                     </div>
                 </div>
-                <div>
-
+                <div className="flex items-center">
+                    <div className="pr-6 md:block">
+                        <NavMenu />
+                    </div>
                 </div>
             </div>
         </nav>

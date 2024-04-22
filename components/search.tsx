@@ -48,27 +48,29 @@ export function SearchForm({
     //TODO: Embed a search page in desktop mode and route to page in mobile mode.
 
     return (
-        <Form {...form_}>
-            <form onSubmit={form_.handleSubmit(handler)}>
-                <div>
-                    <FormField
-                        name="search"
-                        control={form_.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <InputCore
-                                        field={field}
-                                        className={className}
-                                        isPending={isPending}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-            </form>
-        </Form>
+        <Link href={"/find"} passHref tabIndex={-1}>
+            <Form {...form_}>
+                <form onSubmit={form_.handleSubmit(handler)}>
+                    <div>
+                        <FormField
+                            name="search"
+                            control={form_.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <InputCore
+                                            field={field}
+                                            className={className}
+                                            isPending={isPending}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </form>
+            </Form>
+        </Link>
     );
 }
 
