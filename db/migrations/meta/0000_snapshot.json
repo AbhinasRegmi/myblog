@@ -1,9 +1,118 @@
 {
-  "id": "5c2aec8d-28ca-4985-9d27-a0d58036e53b",
+  "id": "507def8b-b194-49b5-9afb-6f6f4c72f6a9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
+    "blog_myblog": {
+      "name": "blog_myblog",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cover": {
+          "name": "cover",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'DRAFT'"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "blog_myblog_user_id_user_id_fk": {
+          "name": "blog_myblog_user_id_user_id_fk",
+          "tableFrom": "blog_myblog",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "component_myblog": {
+      "name": "component_myblog",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "blog_id": {
+          "name": "blog_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "name": "number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "component_myblog_blog_id_blog_myblog_id_fk": {
+          "name": "component_myblog_blog_id_blog_myblog_id_fk",
+          "tableFrom": "component_myblog",
+          "tableTo": "blog_myblog",
+          "columnsFrom": [
+            "blog_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "account": {
       "name": "account",
       "schema": "",
@@ -159,6 +268,14 @@
     }
   },
   "enums": {
+    "status": {
+      "name": "status",
+      "values": {
+        "PUBLISHED": "PUBLISHED",
+        "DRAFT": "DRAFT",
+        "SUSPENDED": "SUSPENDED"
+      }
+    },
     "role": {
       "name": "role",
       "values": {
