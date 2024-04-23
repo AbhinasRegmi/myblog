@@ -6,6 +6,7 @@ import { NavMenu } from "@/components/menu";
 import {
     SigninOrProfile
 } from "@/components/user/signin-or-profile";
+import { WriteIcon } from "@/components/blog/write-icon";
 
 export async function NavBar() {
     return (
@@ -26,12 +27,16 @@ export async function NavBar() {
                     <div className="pr-6 md:hidden">
                         <NavMenu />
                     </div>
-                    <div className="hidden md:block">
-                        <div className="pr-6">
+                    <div className="hidden md:flex">
 
-                        <Suspense fallback={'Sign in'}>
-                            <SigninOrProfile />
-                        </Suspense>
+                        <div className="px-2">
+                            <WriteIcon />
+                        </div>
+
+                        <div className="pr-6">
+                            <Suspense fallback={'Sign in'}>
+                                <SigninOrProfile />
+                            </Suspense>
                         </div>
                     </div>
                 </div>

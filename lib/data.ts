@@ -1,14 +1,20 @@
-import {CircleUserRound, Search} from "lucide-react";
+import {CircleUserRound, Search, PenTool} from "lucide-react";
+import { NEW_BLOG_ROUTE, PROFILE_ROUTE } from "@/routes";
 
 export const MENU_ITEMS = [
     {
-        label: "Profile",
-        href: "/user/profile",
+        label: "Your Profile",
+        href: PROFILE_ROUTE,
         icon: CircleUserRound
     },
     {
-        label: "Search",
+        label: "Search Blogs",
         href: "/find",
         icon: Search
+    },
+    {
+        label: "Write new Blog",
+        href: NEW_BLOG_ROUTE,
+        icon: PenTool
     }
 ]
