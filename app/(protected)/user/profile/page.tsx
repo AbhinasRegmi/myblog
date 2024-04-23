@@ -1,5 +1,7 @@
 import {auth} from "@/auth";
 import {SignInWithPathname} from "@/components/auth/signin";
+import {Profile} from "@/components/user/profile";
+
 
 export default async function ProfilePage(){
     const session = await auth();
@@ -10,9 +12,10 @@ export default async function ProfilePage(){
         )
     }
 
+
     return (
-        <div>
-            You are logged in user.
+        <div className="md:container">
+            <Profile name={session.user?.name ?? 'User'} imageUrl={session.user?.image ?? undefined} />
         </div>
     )
 }

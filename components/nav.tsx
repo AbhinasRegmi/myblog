@@ -20,8 +20,11 @@ export async function NavBar() {
                     </div>
                 </div>
                 <div className="flex items-center">
-                    <div className="pr-6 md:block">
+                    <div className="pr-6 md:hidden">
                         <NavMenu />
+                    </div>
+                    <div className="hidden md:block">
+                        
                     </div>
                 </div>
             </div>
