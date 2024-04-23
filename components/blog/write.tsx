@@ -1,7 +1,12 @@
 "use client";
 
+import {AddContent} from "@/components/blog/add-content";
+
 export function Write({userID}: {userID: string}){
     return (
-        <div>This is write page.. {userID}</div>
+        <div>
+
+            <AddContent />
+        </div>
     )
 }
