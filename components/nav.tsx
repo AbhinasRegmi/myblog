@@ -2,7 +2,10 @@ import { Suspense } from "react";
 
 import { Logo } from "@/components/logo";
 import { SearchForm } from "@/components/search";
-import {NavMenu} from "@/components/menu";
+import { NavMenu } from "@/components/menu";
+import {
+    SigninOrProfile
+} from "@/components/user/signin-or-profile";
 
 export async function NavBar() {
     return (
@@ -24,7 +27,12 @@ export async function NavBar() {
                         <NavMenu />
                     </div>
                     <div className="hidden md:block">
-                        
+                        <div className="pr-6">
+
+                        <Suspense fallback={'Sign in'}>
+                            <SigninOrProfile />
+                        </Suspense>
+                        </div>
                     </div>
                 </div>
             </div>

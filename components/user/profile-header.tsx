@@ -1,15 +1,13 @@
 "use client";
 
 import { PenIcon, LogOut } from "lucide-react";
-import Image from "next/image";
 
 import {
     ThreeDots, ThreeDotsPros
 } from "@/components/ui/three-dots";
 import {
-    Avatar,
-    AvatarFallback,
-} from "@/components/ui/avatar";
+    ProfileAvatar
+} from "@/components/user/profile-avatar";
 
 interface ProfileHeaderProps {
     name: string,
@@ -36,18 +34,7 @@ export function ProfileHeader(props: ProfileHeaderProps) {
     return (
         <div className="pt-12 pb-6 flex items-center justify-between">
             <h1 className="text-2xl flex items-center gap-2">
-                <Avatar>
-                    <Image
-                        src={props.imageUrl ?? ''}
-                        alt="User"
-                        height={32}
-                        width={32}
-                        className="object-cover w-full"
-                    />
-                    <AvatarFallback>
-                        mB
-                    </AvatarFallback>
-                </Avatar>
+                <ProfileAvatar imageUrl={props.imageUrl} />
                 <div className="line-clamp-1 w-[200px] md:w-full">
                     {props.name}
                 </div>
