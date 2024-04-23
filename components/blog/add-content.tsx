@@ -59,28 +59,37 @@ export function AddContent() {
     ];
 
     return (
-        <>
+        <div>
             <Button onClick={() => setOpen(p => !p)} variant={"outline"} size={"icon"} className="fixed bottom-10 right-6 bg-accent opacity-80">
                 <Plus />
             </Button>
 
-            <CommandDialog open={open} onOpenChange={setOpen} className="-translate-y-[92%] md:-translate-y-1/2 min-h-[350px]">
+            <CommandDialog open={open} onOpenChange={setOpen} styles="-translate-y-[92%] md:-translate-y-1/2 min-h-[350px]">
                 <CommandInput placeholder="Type a component name  or search..." />
                 <CommandList>
                     <CommandEmpty>No such component found.</CommandEmpty>
                     <CommandGroup heading="Components">
                         {
                             components.map(i => (
-                                <CommandItem key={i.label}>
+                                <CommandItem key={i.label} onSelect={
+                                    () => {
+                                        setOpen(false);
+                                    }}
+                                >
                                     <span className="text-base">{i.label}</span>
                                 </CommandItem>
                             ))
                         }
                     </CommandGroup>
+                    <CommandSeparator />
                     <CommandGroup heading="Utility">
                         {
                             utilities.map(i => (
-                                <CommandItem key={i.label}>
+                                <CommandItem key={i.label} onSelect={
+                                    () => {
+                                        setOpen(false);
+                                    }}
+                                >
                                     <span className="text-base">{i.label}</span>
                                 </CommandItem>
                             ))
@@ -88,6 +97,6 @@ export function AddContent() {
                     </CommandGroup>
                 </CommandList>
             </CommandDialog>
-        </>
+        </div>
     )
 }   
