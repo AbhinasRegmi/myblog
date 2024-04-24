@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 import { toast } from "@/lib/toast";
+import {BlogBoard} from "@/components/blog/board";
 import { AddContent } from "@/components/blog/add-content";
 
 export function Write({ userID }: { userID: string }) {
@@ -15,6 +16,7 @@ export function Write({ userID }: { userID: string }) {
 
     return (
         <div>
+            <BlogBoard />
             <AddContent />
         </div>
     )
