@@ -99,7 +99,7 @@ function useBlockRef(block: BlogComponentProps) {
         return () => {
             current?.removeEventListener("keydown", handleKeyDown);
         }
-    }, [block.content, dispatch])
+    }, [block, dispatch])
 
     return { blockRef, handleInput }
 }
