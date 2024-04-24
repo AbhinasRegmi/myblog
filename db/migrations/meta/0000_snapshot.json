@@ -1,5 +1,5 @@
 {
-  "id": "507def8b-b194-49b5-9afb-6f6f4c72f6a9",
+  "id": "1bf3d612-de79-4a6c-be79-9b88f35b415d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -10,9 +10,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "title": {
           "name": "title",
@@ -71,7 +72,7 @@
         },
         "blog_id": {
           "name": "blog_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },

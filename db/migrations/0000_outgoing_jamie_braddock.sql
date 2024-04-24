@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "blog_myblog" (
-	"id" text PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text,
 	"cover" text,
 	"status" "status" DEFAULT 'DRAFT',
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "blog_myblog" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "component_myblog" (
 	"id" text PRIMARY KEY NOT NULL,
-	"blog_id" text NOT NULL,
+	"blog_id" uuid NOT NULL,
 	"type" text NOT NULL,
 	"content" text NOT NULL,
 	"number" integer NOT NULL

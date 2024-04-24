@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,10 +13,17 @@ import {
     CommandList,
     CommandSeparator,
 } from "@/components/ui/command";
+import { blogContext, BlogReducerActionType } from "@/context/blog-context";
+import { BlogLabels } from "@/components/blog/comp";
 
 export function AddContent() {
     const [open, setOpen] = useState<boolean>(false);
+    const {dispatch} = useContext(blogContext);
 
+    if(!dispatch){
+        throw new Error("Use Context should be wrapped with provider.")
+    }
+    
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
             if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -28,33 +35,33 @@ export function AddContent() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
-    const components = [
+    const components: Array<{label: BlogLabels, name: string}> = [
         {
-            label: "Title",
-            dispatch: {}
+            label: "title",
+            name: "Title"
         },
         {
-            label: "Image",
-            dispatch: {}
+            label: "image",
+            name: "Image"
         },
         {
-            label: "Paragraph",
-            dispatch: {}
+            label: "pararaph",
+            name: "Paragraph"
         },
         {
-            label: "Link",
-            dispatch: {}
+            label: "link",
+            name: "Link"
         },
         {
-            label: "Code",
-            dispatch: {}
+            label: "code",
+            name: "Code"
         }
-    ]
+    ];
 
-    const utilities = [
+    const utilities: Array<{label: BlogLabels, name: string}> = [
         {
-            label: "Line Gap",
-            dispatch: {}
+            label: "line-gap",
+            name: "Line gap"
         }
     ];
 
@@ -63,6 +70,7 @@ export function AddContent() {
             <Button onClick={() => setOpen(p => !p)} variant={"outline"} size={"icon"} className="fixed bottom-24 md:bottom-10 right-6 bg-accent opacity-80">
                 <Plus />
             </Button>
+
 
             <CommandDialog open={open} onOpenChange={setOpen} styles="-translate-y-[92%] md:-translate-y-1/2 min-h-[350px]">
                 <CommandInput placeholder="Type a component name  or search..." />
@@ -73,10 +81,14 @@ export function AddContent() {
                             components.map(i => (
                                 <CommandItem key={i.label} onSelect={
                                     () => {
+                                        dispatch({
+                                            type: "create",
+                                            label: i.label,
+                                        })
                                         setOpen(false);
                                     }}
                                 >
-                                    <span className="text-base">{i.label}</span>
+                                    <span className="text-base">{i.name}</span>
                                 </CommandItem>
                             ))
                         }
@@ -87,10 +99,14 @@ export function AddContent() {
                             utilities.map(i => (
                                 <CommandItem key={i.label} onSelect={
                                     () => {
+                                        dispatch({
+                                            type: "create",
+                                            label: i.label,
+                                        })
                                         setOpen(false);
                                     }}
                                 >
-                                    <span className="text-base">{i.label}</span>
+                                    <span className="text-base">{i.name}</span>
                                 </CommandItem>
                             ))
                         }
