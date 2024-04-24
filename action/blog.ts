@@ -1,22 +1,28 @@
 "use server";
 
-import {auth} from "@/auth";
-import { createNewBlog } from "@/db/query/blog";
+import { updateBlogComponent, deleteBlogComponent } from "@/db/query/blog";
+import { BlogComponentProps } from "@/components/blog/comp";
 
-export async function createNewBlogAction({blogID}: {blogID: string}){
-    const session = await auth();
-
-    if(!session?.user?.id){
-        return {error: "User should be logged in."}
-    }
+/** This function is not secure. Use only if user identity is verified. */
+export async function updateBlogComponentAction(blog: BlogComponentProps){
 
     try{
-        await createNewBlog({
-            userID: session.user.id
-        })
+        await updateBlogComponent({block: blog})
 
-        return {success: "New Blog created."}
-    }catch{
+        return {success: "Component created successfully."}
+    }catch(e){
+        return {error: 'Something went wrong.'}
+    }
+}
+
+/** This function is not secure. Use only if user identity is verified. */
+export async function deleteBlogComponentAction({blogID, componentID}: {blogID: string, componentID: string}){
+    try{
+
+        await deleteBlogComponent({blogID, componentID});
+
+        return {success: "Component deleted successfully."}
+    }catch(e){
         return {error: "Something went wrong."}
     }
 }

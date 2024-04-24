@@ -7,6 +7,7 @@ import {BlogBoard} from "@/components/blog/board";
 import { AddContent } from "@/components/blog/add-content";
 import {blogContext, blogReducer} from "@/context/blog-context";
 import { BlogComponentProps } from "@/components/blog/comp";
+import { useSetParams } from "@/hooks/useSetParams";
 
 
 interface WriteProps {
@@ -18,6 +19,9 @@ export function Write(props: WriteProps) {
         blogReducer,
         props.data ?? []
     )
+
+    useSetParams({key: 'blogID', value: props.blogID});
+
     useEffect(() => {
         toast("",{
             description: "Enter `Ctrl + k` to open menu"
@@ -27,7 +31,6 @@ export function Write(props: WriteProps) {
     
     return (
         <blogContext.Provider value={{dispatch: dispatchFn}}>
-            {props.blogID}
             <BlogBoard data={blogState} />
             <AddContent />
         </blogContext.Provider>

@@ -2,6 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,12 +14,13 @@ import {
     CommandList,
     CommandSeparator,
 } from "@/components/ui/command";
-import { blogContext, BlogReducerActionType } from "@/context/blog-context";
+import { blogContext } from "@/context/blog-context";
 import { BlogLabels } from "@/components/blog/comp";
 
 export function AddContent() {
-    const [open, setOpen] = useState<boolean>(false);
     const {dispatch} = useContext(blogContext);
+    const [open, setOpen] = useState<boolean>(false);
+    const searchParams = useSearchParams();
 
     if(!dispatch){
         throw new Error("Use Context should be wrapped with provider.")
@@ -84,7 +86,9 @@ export function AddContent() {
                                         dispatch({
                                             type: "create",
                                             label: i.label,
+                                            blogID: searchParams.get("blogID") ?? ''
                                         })
+
                                         setOpen(false);
                                     }}
                                 >
@@ -102,6 +106,7 @@ export function AddContent() {
                                         dispatch({
                                             type: "create",
                                             label: i.label,
+                                            blogID: searchParams.get("blogID") ?? ''
                                         })
                                         setOpen(false);
                                     }}
