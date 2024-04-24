@@ -1,8 +1,18 @@
 "use client";
 
-import {AddContent} from "@/components/blog/add-content";
+import { useEffect } from "react";
 
-export function Write({userID}: {userID: string}){
+import { toast } from "@/lib/toast";
+import { AddContent } from "@/components/blog/add-content";
+
+export function Write({ userID }: { userID: string }) {
+
+    useEffect(() => {
+        toast("",{
+            description: "Enter `Ctrl + k` to open menu"
+        })
+    }, [])
+
     return (
         <div>
             <AddContent />
