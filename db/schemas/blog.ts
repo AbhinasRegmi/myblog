@@ -2,7 +2,8 @@ import {
     pgTable,
     pgEnum,
     text,
-    integer
+    integer,
+    uuid
 } from "drizzle-orm/pg-core";
 
 import {users} from "@/db/schemas/users";
@@ -10,7 +11,7 @@ import {users} from "@/db/schemas/users";
 export const STATUS = pgEnum("status", ["PUBLISHED", "DRAFT", "SUSPENDED"])
 
 export const blog = pgTable("blog_myblog", {
-    id: text("id").primaryKey(),
+    id: uuid("id").defaultRandom().primaryKey(),
     title: text("title"),
     cover: text("cover"),
     status: STATUS("status").default("DRAFT"),
@@ -24,7 +25,7 @@ export const blog = pgTable("blog_myblog", {
 
 export const component = pgTable("component_myblog", {
     id: text("id").primaryKey(),
-    blog_id: text("blog_id").notNull().references(
+    blog_id: uuid("blog_id").notNull().references(
         () => blog.id,
         {
             onDelete: "cascade"
