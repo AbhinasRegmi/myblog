@@ -2,7 +2,7 @@
 
 import { useEffect, useReducer } from "react";
 
-import { toast } from "@/lib/toast";
+import { toast } from "sonner";
 import { BlogBoard } from "@/components/blog/board";
 import { AddContent } from "@/components/blog/add-content";
 import { blogContext, blogReducer } from "@/context/blog-context";
@@ -27,9 +27,10 @@ export function Write(props: WriteProps) {
             setTimeout(() => {
                 toast("", {
                     description: "Enter `Ctrl + k` to open menu",
+                    className: "md:fixed, md:left-6 md:bottom-6"
                 })
             })
-        }
+        }, []
     )
 
     return (
