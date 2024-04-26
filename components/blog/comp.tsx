@@ -20,11 +20,40 @@ export function TitleBlock(props: BlogComponentProps) {
     const {blockRef, handleInput} = useBlockRef(props);
 
     return (
-        <div className="pt-8">
-            <h1 ref={blockRef} onInput={(e) => handleInput(e.currentTarget.textContent ?? '')} contentEditable={props.isEditable ?? false}
+        <div className="pt-8 pb-4">
+            <h1
+            ref={blockRef} 
+            onInput={(e) => handleInput(e.currentTarget.textContent ?? '')}
+            contentEditable={props.isEditable ?? false}
+
             className={
-                cn("-ml-1 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl py-2 focus:outline-none after:opacity-30", !!!props.content && "empty:after:content-['Title...']")}>
+                cn(
+                    "-ml-1 scroll-m-20 text-4xl font-extrabold ",
+                    "tracking-tight lg:text-5xl py-2 focus:outline-none after:opacity-30 whitespace-break-spaces", 
+                    !!!props.content && "empty:after:content-['Title...']"
+                )
+            }>
             </h1>
+        </div>
+    )
+}
+
+export function ParagraphBlock(props: BlogComponentProps){
+    const {blockRef, handleInput} = useBlockRef(props);
+
+    return (
+        <div className="inline-block">
+            <p
+            ref={blockRef}
+            onInput={e => handleInput(e.currentTarget.textContent ?? '')}
+            contentEditable={props.isEditable ?? false}
+            className={
+                cn(
+                    "focus:outline-none after:opacity-30 inline-block text-lg whitespace-break-spaces",
+                    !!!props.content && "empty:after:content-['Paragraph...']"
+                )
+            }>
+            </p>
         </div>
     )
 }
@@ -35,17 +64,24 @@ export function RenderBlock(block: BlogComponentProps) {
             return (
                 <TitleBlock key={block.id} {...block} />
             )
+        case "pararaph":
+            return (
+                <ParagraphBlock key={block.id} {...block} />
+            )
+
         default: {
             throw new Error("Unhandled compoent type...")
         }
     }
 }
 
-
 function useBlockRef(block: BlogComponentProps) {
     const [isPending, startTransition] = useTransition();
 
+    //TODO: Show pending status to show updating and other side effects.
+
     const blockRef = useRef<HTMLDivElement>(null);
+    
     const { dispatch } = useContext(blogContext);    
 
     let timer: any = null;
@@ -91,9 +127,12 @@ function useBlockRef(block: BlogComponentProps) {
 
         current?.addEventListener('keydown', handleKeyDown);
 
-        current?.focus();
         if(current?.textContent === ''){
             current.textContent = block.content;
+        }
+
+        if(!block.content){
+            current?.focus();
         }
         
         return () => {

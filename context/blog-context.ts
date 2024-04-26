@@ -18,10 +18,11 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
 
             switch (action.label) {
                 case "title":
+                case "pararaph":
                     return [
                         ...state,
                         {
-                            label: "title",
+                            label: action.label,
                             content: "",
                             id: blockID,
                             position: length + 1,

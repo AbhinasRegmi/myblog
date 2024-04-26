@@ -8,6 +8,7 @@ import * as z from "zod";
 import { RotateCw } from "lucide-react";
 import Link from "next/link";
 
+import { SEARCH_ROUTE } from "@/routes";
 import { FormItem, FormField, FormControl, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SearchSchema } from "@/schemas/search";
@@ -23,6 +24,7 @@ export function SearchForm({
     const searchParams = useSearchParams();
     const { replace } = useRouter();
     const pathname = usePathname();
+    const isSearchPage = !!pathname.startsWith(SEARCH_ROUTE)
 
     const form_ = useForm<z.infer<typeof SearchSchema>>({
         resolver: zodResolver(SearchSchema),
@@ -48,7 +50,8 @@ export function SearchForm({
     //TODO: Embed a search page in desktop mode and route to page in mobile mode.
 
     return (
-        <Link href={"/find"} passHref tabIndex={-1}>
+        <Link href={SEARCH_ROUTE} passHref tabIndex={-1}
+        >
             <Form {...form_}>
                 <form onSubmit={form_.handleSubmit(handler)}>
                     <div>
@@ -60,7 +63,11 @@ export function SearchForm({
                                     <FormControl>
                                         <InputCore
                                             field={field}
-                                            className={className}
+                                            className={cn(
+                                                isSearchPage && "ring-offset-background ring-2 ring-ring ring-offset-2",
+                                                className
+
+                                            )}
                                             isPending={isPending}
                                         />
                                     </FormControl>

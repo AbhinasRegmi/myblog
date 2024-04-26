@@ -9,6 +9,7 @@ interface MenuItemsProps {
 }
 
 export function MenuItems(props: MenuItemsProps) {
+    //TODO: Icon identification when on proper route.
     return (
         <ul className="space-y-2 divide-y">
             {
