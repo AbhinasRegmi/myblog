@@ -6,9 +6,10 @@ import {cn} from "@/lib/utils";
 export function toast(message: ReactNode, data?: ExternalToast){
     return (
         sonner_toast(
-            message, {
+            message, 
+            {
                 ...data,
-                className: cn("md:fixed md:left-6 md:bottom-6",  data?.className),
+                className: cn("md:fixed md:left-6 md:bottom-6", data?.className)
             }
         )
     )
