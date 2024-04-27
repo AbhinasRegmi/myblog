@@ -125,7 +125,7 @@ function ImagePlaceholder() {
                 <div className="flex justify-center">
                     <ImagePlus size={50} className="text-muted-foreground" />
                 </div>
-                <div className="text-sm text-muted-foreground/55 text-center">Upload Images</div>
+                <div className="text-sm text-muted-foreground/55 text-center select-none">Upload Images</div>
             </div>
         </div>
     )
