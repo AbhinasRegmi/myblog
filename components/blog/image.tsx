@@ -38,7 +38,8 @@ export function ImageUpload(props: ImageUploadProps) {
                 signatureEndpoint={CLOUDINARY_SIGNATURE_ROUTE}
                 options={{
                     sources: ['local'],
-                    multiple: false
+                    multiple: false,
+                    folder: 'myBlog'
                 }}
                 onSuccess={(result) => {
                     const data = result?.info as UploadedAssetData;

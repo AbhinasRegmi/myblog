@@ -4,6 +4,8 @@ import Image from "next/image";
 import LogoSVG from "@/public/images/logo.svg";
 
 export async function Logo() {
+    //TODO: Background Burn image white bg is blocking view.
+
     return (
 
         <Link href={"/"} className="flex items-center justify-center w-fit">
