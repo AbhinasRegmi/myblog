@@ -19,6 +19,7 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
             switch (action.label) {
                 case "title":
                 case "pararaph":
+                case "image":
                     return [
                         ...state,
                         {

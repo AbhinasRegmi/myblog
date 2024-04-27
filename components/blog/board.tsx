@@ -10,7 +10,7 @@ export function BlogBoard(props: BlogBoardProps) {
     return (
         <div className="md:container px-6 md:px-28">
             <GridBackGround>
-                <div className="w-full py-4 px-6 min-h-[550px]">
+                <div className="w-full py-4 px-6 min-h-[550px] pb-20">
                     {
                         props.data.map(block => (
                             RenderBlock(block)
