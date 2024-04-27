@@ -84,7 +84,7 @@ export function ImageContext(props: BlogComponentProps) {
             <ContextMenu>
                 <ContextMenuTrigger>
                     {
-                        !!publicUrl ? <StaticImage key={publicUrl} publicUrl={publicUrl} data={props} /> : <ImagePlaceholder />
+                        !!publicUrl ? <StaticImage publicUrl={publicUrl} data={props} /> : <ImagePlaceholder />
                     }
                 </ContextMenuTrigger>
 
@@ -141,7 +141,7 @@ export function StaticImage({ publicUrl, data }: { publicUrl: string, data: Blog
                 content: publicUrl
             })
         })
-    }, [])
+    }, [publicUrl, data])
 
     return (
         <CldImage
