@@ -33,6 +33,7 @@
     "next-auth": "^5.0.0-beta.16",
     "next-cloudinary": "^6.5.1",
     "next-themes": "^0.3.0",
+    "next-transition-bar": "^1.1.1",
     "postgres": "^3.4.4",
     "react": "^18",
     "react-dom": "^18",

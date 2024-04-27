@@ -18,7 +18,7 @@ export function ProfileAvatar(props: { imageUrl?: string }) {
     return (
         <Avatar
             className={cn(
-                isProfilePage && "ring ring-ring ring-offset-2 ring-offset-background"
+                isProfilePage && "ring ring-ring/5 ring-offset-2 ring-offset-background"
             )}
         >
             <Image

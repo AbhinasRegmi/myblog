@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from 'next/font/google';
 import "./globals.css";
 
+import NextTransitionBar from "next-transition-bar";
+
 import { NavBar } from "@/components/nav";
 import {Toaster} from "@/components/ui/sonner";
 
@@ -26,6 +28,7 @@ export default function RootLayout({
       lang="en"
       className={`${space_grotesk.className} scroll-smooth`}
     >
+      <NextTransitionBar color="black" showSpinner={false} />
       <body>
         <NavBar />
         {children}
