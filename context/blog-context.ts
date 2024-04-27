@@ -20,6 +20,7 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
                 case "title":
                 case "pararaph":
                 case "image":
+                case "link":
                     return [
                         ...state,
                         {

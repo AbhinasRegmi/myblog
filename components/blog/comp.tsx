@@ -6,6 +6,7 @@ import { blogContext } from "@/context/blog-context";
 import { updateBlogComponentAction, deleteBlogComponentAction } from "@/action/blog";
 import { cn } from "@/lib/utils";
 import { StaticImage, ImageContext } from "@/components/blog/image";
+import { Link as LinkLucide } from "lucide-react";
 
 export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
 export interface BlogComponentProps {
@@ -63,12 +64,114 @@ function ImageBlock(props: BlogComponentProps) {
     return (
         <div>
             {
-                props.isEditable ? <ImageContext {...props}  /> : <StaticImage publicUrl={props.content} data={props} />
+                props.isEditable ? <ImageContext {...props} /> : <StaticImage publicUrl={props.content} data={props} />
             }
         </div>
     )
 }
 
+function LinkBlock(props: BlogComponentProps) {
+    let linkRef = useRef<HTMLAnchorElement>(null);
+    const [isPending, startTransition] = useTransition();
+    const [isHref, setIsHref] = useState<boolean>(true);
+    const { dispatch } = useContext(blogContext);
+    const SEPARATOR = '(---;;;---)';
+
+
+    function inputHandler(data: string) {
+
+        if (linkRef.current?.href) {
+
+            startTransition(async () => {
+                const content = linkRef.current?.href + SEPARATOR + data;
+
+                await updateBlogComponentAction({
+                    ...props,
+                    content: content
+                });
+            })
+        }
+    }
+
+
+    useEffect(() => {
+
+        const ref = linkRef.current;
+
+        function keyHandler(event: KeyboardEvent) {
+            if (!ref) return;
+
+            if (event.key === 'Backspace' && ref.textContent === '') {
+
+                !!dispatch && dispatch({
+                    type: 'delete',
+                    id: props.id,
+                    blogID: props.blogId,
+                    label: props.label
+                })
+
+                startTransition(async () => {
+                    await deleteBlogComponentAction({
+                        blogID: props.blogId,
+                        componentID: props.id
+                    });
+                })
+
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+
+                if (!!!ref.href) {
+                    ref.href = ref.textContent ?? '';
+                    ref.textContent = '';
+                    setIsHref(false);
+                } else {
+                    ref.blur();
+                }
+            }
+        }
+
+        if (!props.content) {
+            ref?.focus();
+        } else {
+            const sep = props.content.split(SEPARATOR);
+
+            if (sep.length === 2) {
+                if (ref) {
+                    ref.href = sep[0];
+                    ref.textContent = sep[1];
+                    setIsHref(false);
+                }
+            }
+        }
+
+        ref?.addEventListener('keydown', keyHandler);
+
+        return () => {
+            ref?.removeEventListener('keydown', keyHandler);
+        }
+    }, [props, dispatch])
+
+    return (
+        <div className="inline gap-1 items-center">
+            <a
+                ref={linkRef}
+                target="_blank"
+                contentEditable={props.isEditable ?? false}
+                onInput={e => inputHandler(e.currentTarget.textContent ?? '')}
+                className={cn(
+                    "focus:outline-none text-lg underline after:opacity-50 inline",
+                    !!!props.content && !isHref && "empty:after:content-['Enter_label_for_link']",
+                    !!!props.content && isHref && "empty:after:content-['Enter_link_and_press_enter']"
+                )}
+            >
+
+            </a>
+            {
+                !isHref && <LinkLucide size={16} className="text-muted-foreground inline" />
+            }
+        </div>
+    )
+}
 
 
 export function RenderBlock(block: BlogComponentProps) {
@@ -84,6 +187,10 @@ export function RenderBlock(block: BlogComponentProps) {
         case "image":
             return (
                 <ImageBlock key={block.id} {...block} />
+            )
+        case "link":
+            return (
+                <LinkBlock key={block.id} {...block} />
             )
 
         default: {
