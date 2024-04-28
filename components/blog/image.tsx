@@ -24,7 +24,6 @@ interface UploadedAssetData {
     height: number;
     id: string;
 }
-
 interface ImageUploadProps {
     setPublicUrl: (i: string) => void;
     openRef: MutableRefObject<(() => void) | null>;
@@ -56,8 +55,6 @@ export function ImageUpload(props: ImageUploadProps) {
         </div>
     )
 }
-
-
 
 export function ImageContext(props: BlogComponentProps) {
     const [publicUrl, setPublicUrl] = useState<string | undefined>(props.content ?? undefined);
@@ -146,7 +143,7 @@ export function StaticImage({ publicUrl, data }: { publicUrl: string, data: Blog
 
     return (
         <CldImage
-            alt="Blog image"
+            alt="Abhinas Regmi's myBlog"
             src={publicUrl ?? ''}
             width={width ?? 1000}
             height={1000}

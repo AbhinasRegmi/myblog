@@ -21,6 +21,7 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
                 case "pararaph":
                 case "image":
                 case "link":
+                case "line-gap":
                     return [
                         ...state,
                         {

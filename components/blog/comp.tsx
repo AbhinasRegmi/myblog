@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useEffect, useTransition, useRef, useContext } from "react";
+import {
+    useRef,
+    useState,
+    useEffect,
+    useContext,
+    useTransition,
+} from "react";
+import { Link as LinkLucide } from "lucide-react";
 
 import { blogContext } from "@/context/blog-context";
-import { updateBlogComponentAction, deleteBlogComponentAction } from "@/action/blog";
+import {
+    updateBlogComponentAction,
+    deleteBlogComponentAction
+} from "@/action/blog";
 import { cn } from "@/lib/utils";
 import { StaticImage, ImageContext } from "@/components/blog/image";
-import { Link as LinkLucide } from "lucide-react";
 
 export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
 export interface BlogComponentProps {
@@ -44,14 +53,14 @@ function ParagraphBlock(props: BlogComponentProps) {
     const { blockRef, handleInput } = useBlockRef(props);
 
     return (
-        <div className="inline-block">
+        <div className="inline">
             <p
                 ref={blockRef}
                 onInput={e => handleInput(e.currentTarget.textContent ?? '')}
                 contentEditable={props.isEditable ?? false}
                 className={
                     cn(
-                        "focus:outline-none after:opacity-30 inline-block text-lg whitespace-break-spaces",
+                        "focus:outline-none after:opacity-30 inline-flex text-lg whitespace-break-spaces",
                         !!!props.content && "empty:after:content-['Paragraph...']"
                     )
                 }>
@@ -80,6 +89,8 @@ function LinkBlock(props: BlogComponentProps) {
 
     function inputHandler(data: string) {
 
+        if(!props.isEditable) return;
+
         if (linkRef.current?.href) {
 
             startTransition(async () => {
@@ -95,6 +106,7 @@ function LinkBlock(props: BlogComponentProps) {
 
 
     useEffect(() => {
+        if(!props.isEditable) return;
 
         const ref = linkRef.current;
 
@@ -159,7 +171,7 @@ function LinkBlock(props: BlogComponentProps) {
                 contentEditable={props.isEditable ?? false}
                 onInput={e => inputHandler(e.currentTarget.textContent ?? '')}
                 className={cn(
-                    "focus:outline-none text-lg underline after:opacity-50 inline",
+                    "focus:outline-none text-lg underline after:opacity-50 inline-flex",
                     !!!props.content && !isHref && "empty:after:content-['Enter_label_for_link']",
                     !!!props.content && isHref && "empty:after:content-['Enter_link_and_press_enter']"
                 )}
@@ -173,6 +185,68 @@ function LinkBlock(props: BlogComponentProps) {
     )
 }
 
+function LineGapBlock(props: BlogComponentProps) {
+    const [isPending, startTransition] = useTransition();
+    const { dispatch } = useContext(blogContext);
+
+    useEffect(() => {
+        if(!props.isEditable) return;
+
+        startTransition(async () => {
+            await updateBlogComponentAction({
+                ...props
+            })
+        })
+    })
+
+    function doubleClickHandler() {
+
+        if (!props.isEditable) return;
+
+        !!dispatch && dispatch({
+            type: 'delete',
+            id: props.id,
+            blogID: props.blogId,
+            label: props.label,
+        })
+
+        startTransition(async () => {
+            await deleteBlogComponentAction({
+                blogID: props.blogId,
+                componentID: props.id
+            })
+        })
+    }
+
+    return (
+        <div
+            onDoubleClick={doubleClickHandler}
+            className={
+                cn(
+                    "select-none group relative",
+                    props.isEditable && "border-x-2",
+                    props.isEditable && "cursor-pointer"
+                )
+            }
+        >
+            <br />
+            <br />
+            {
+                props.isEditable && (
+                    <div
+                        className={cn(
+                            "absolute inset-0 hidden",
+                            props.isEditable && "group-hover:flex items-center justify-center"
+                        )}
+                    >
+
+                        <p className="text-sm text-muted-foreground">Double click to remove.</p>
+                    </div>
+                )
+            }
+        </div>
+    )
+}
 
 export function RenderBlock(block: BlogComponentProps) {
     switch (block.label) {
@@ -191,6 +265,10 @@ export function RenderBlock(block: BlogComponentProps) {
         case "link":
             return (
                 <LinkBlock key={block.id} {...block} />
+            )
+        case "line-gap":
+            return (
+                <LineGapBlock key={block.id} {...block} />
             )
 
         default: {
@@ -213,6 +291,8 @@ function useBlockRef(block: BlogComponentProps) {
 
 
     function handleInput(content: string) {
+        if (!block.isEditable) return;
+
         if (timer) {
             clearTimeout(timer);
         }
@@ -231,6 +311,8 @@ function useBlockRef(block: BlogComponentProps) {
     }
 
     useEffect(() => {
+
+        if (!block.isEditable) return;
 
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === 'Backspace' && blockRef.current?.textContent === '') {
