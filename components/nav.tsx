@@ -7,6 +7,7 @@ import {
     SigninOrProfile
 } from "@/components/user/signin-or-profile";
 import { WriteIcon } from "@/components/blog/write-icon";
+import {Indicator} from "@/components/blog/indicator";
 
 export async function NavBar() {
     return (
@@ -27,7 +28,10 @@ export async function NavBar() {
                     <div className="pr-6 md:hidden">
                         <NavMenu />
                     </div>
-                    <div className="hidden md:flex">
+                    <div className="hidden md:flex md:gap-2 md:items-center">
+                        <div className="border-2 rounded-full scale-75 border-dashed">
+                           <Indicator /> 
+                        </div>
 
                         <div className="px-2">
                             <WriteIcon />

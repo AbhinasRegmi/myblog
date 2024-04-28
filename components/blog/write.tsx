@@ -22,16 +22,17 @@ export function Write(props: WriteProps) {
 
     useSetParams({ key: 'blogID', value: props.blogID });
 
-    useEffect(
-        () => {
-            setTimeout(() => {
-                toast("", {
-                    description: "Enter `Ctrl + k` to open menu",
-                    className: "md:fixed, md:left-6 md:bottom-6"
-                })
-            })
-        }, []
-    )
+    //TODO: The toast is not behaving properly.
+    // useEffect(
+    //     () => {
+    //         setTimeout(() => {
+    //             toast("", {
+    //                 description: "Enter `Ctrl + k` to open menu",
+    //                 className: "md:fixed, md:left-6 md:bottom-6"
+    //             })
+    //         })
+    //     }, []
+    // )
 
     return (
         <blogContext.Provider value={{ dispatch: dispatchFn }}>

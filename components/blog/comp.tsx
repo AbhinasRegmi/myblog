@@ -15,6 +15,7 @@ import {
     deleteBlogComponentAction
 } from "@/action/blog";
 import { cn } from "@/lib/utils";
+import { useSetIndicator } from "@/hooks/useSetIndicator";
 import { StaticImage, ImageContext } from "@/components/blog/image";
 
 export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
@@ -82,6 +83,7 @@ function ImageBlock(props: BlogComponentProps) {
 function LinkBlock(props: BlogComponentProps) {
     let linkRef = useRef<HTMLAnchorElement>(null);
     const [isPending, startTransition] = useTransition();
+    useSetIndicator(isPending);
     const [isHref, setIsHref] = useState<boolean>(true);
     const { dispatch } = useContext(blogContext);
     const SEPARATOR = '(---;;;---)';
@@ -89,7 +91,7 @@ function LinkBlock(props: BlogComponentProps) {
 
     function inputHandler(data: string) {
 
-        if(!props.isEditable) return;
+        if (!props.isEditable) return;
 
         if (linkRef.current?.href) {
 
@@ -106,7 +108,7 @@ function LinkBlock(props: BlogComponentProps) {
 
 
     useEffect(() => {
-        if(!props.isEditable) return;
+        if (!props.isEditable) return;
 
         const ref = linkRef.current;
 
@@ -190,7 +192,7 @@ function LineGapBlock(props: BlogComponentProps) {
     const { dispatch } = useContext(blogContext);
 
     useEffect(() => {
-        if(!props.isEditable) return;
+        if (!props.isEditable) return;
 
         startTransition(async () => {
             await updateBlogComponentAction({
@@ -279,13 +281,12 @@ export function RenderBlock(block: BlogComponentProps) {
 
 function useBlockRef(block: BlogComponentProps) {
     const [isPending, startTransition] = useTransition();
+    useSetIndicator(isPending);
 
-    //TODO: Show pending status to show updating and other side effects.
+    //TODO: Show Error status.
 
     const blockRef = useRef<HTMLDivElement>(null);
-
     const { dispatch } = useContext(blogContext);
-
     let timer: any = null;
 
 
@@ -317,13 +318,19 @@ function useBlockRef(block: BlogComponentProps) {
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === 'Backspace' && blockRef.current?.textContent === '') {
                 if (dispatch) {
-                    dispatch({ type: 'delete', id: block.id, label: block.label, blogID: block.blogId });
-
                     startTransition(async () => {
-                        await deleteBlogComponentAction({
+                        deleteBlogComponentAction({
                             blogID: block.blogId,
                             componentID: block.id
-                        });
+                        }).then(
+                            (data) => {
+                                if(data.success){
+                                    dispatch({ type: 'delete', id: block.id, label: block.label, blogID: block.blogId });
+                                }else{
+                                    throw new Error(data.error)
+                                }
+                            }
+                        )
                     })
                 }
             }
@@ -346,5 +353,6 @@ function useBlockRef(block: BlogComponentProps) {
         }
     }, [block, dispatch])
 
+    
     return { blockRef, handleInput }
 }

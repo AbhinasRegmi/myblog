@@ -16,6 +16,7 @@ import { CLOUDINARY_SIGNATURE_ROUTE } from "@/routes";
 import { BlogComponentProps } from "@/components/blog/comp";
 import { deleteBlogComponentAction, updateBlogComponentAction } from "@/action/blog";
 import { blogContext } from "@/context/blog-context";
+import { useSetIndicator } from "@/hooks/useSetIndicator";
 
 
 interface UploadedAssetData {
@@ -59,6 +60,7 @@ export function ImageUpload(props: ImageUploadProps) {
 export function ImageContext(props: BlogComponentProps) {
     const [publicUrl, setPublicUrl] = useState<string | undefined>(props.content ?? undefined);
     const [isPending, startTransition] = useTransition();
+    useSetIndicator(isPending);
     const { dispatch } = useContext(blogContext);
 
     const openRef = useRef<(() => void) | null>(null);

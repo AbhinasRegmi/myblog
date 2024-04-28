@@ -17,7 +17,8 @@ export function WriteIcon() {
             variant={"ghost"}
             size={"lg"}
             className={cn(
-                isWritePage && "ring-offset-background ring-2 ring-ring ring-offset-2"
+                isWritePage && "ring-offset-background ring-2 ring-ring ring-offset-2",
+                
             )}
             asChild >
             <Link href={NEW_BLOG_ROUTE} className="text-muted-foreground flex gap-2 items-center" >

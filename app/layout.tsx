@@ -5,7 +5,8 @@ import "./globals.css";
 import NextTransitionBar from "next-transition-bar";
 
 import { NavBar } from "@/components/nav";
-import {Toaster} from "@/components/ui/sonner";
+import { IndicatorContextProvider } from "@/context/indicator-context";
+import { Toaster } from "@/components/ui/sonner";
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -30,8 +31,10 @@ export default function RootLayout({
     >
       <NextTransitionBar color="black" showSpinner={false} />
       <body>
-        <NavBar />
-        {children}
+        <IndicatorContextProvider>
+          <NavBar />
+          {children}
+        </IndicatorContextProvider>
         <Toaster />
       </body>
 

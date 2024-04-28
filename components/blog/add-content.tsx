@@ -69,7 +69,7 @@ export function AddContent() {
 
     return (
         <div>
-            <Button onClick={() => setOpen(p => !p)} variant={"outline"} size={"icon"} className="fixed bottom-24 md:bottom-10 right-6 bg-accent opacity-80">
+            <Button onClick={() => setOpen(p => !p)} variant={"outline"} size={"icon"} className="fixed bottom-12 md:bottom-10 right-6 bg-accent opacity-80">
                 <Plus />
             </Button>
 
