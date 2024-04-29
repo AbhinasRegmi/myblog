@@ -17,7 +17,7 @@ export const SupportedLanguages = [
     "sql"
 ] as const;
 
-type SLangType <T extends ReadonlyArray <unknown>> = T extends ReadonlyArray<infer SLangType> ? SLangType : never
+type SLangType <T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer S> ? S : never
 export type SupportedLanguageType = SLangType<typeof SupportedLanguages>
 
 SyntaxHighlighter.registerLanguage('tsx', tsx);
