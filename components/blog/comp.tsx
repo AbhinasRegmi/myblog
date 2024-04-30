@@ -7,7 +7,7 @@ import {
     useContext,
     useTransition,
 } from "react";
-import { Link as LinkLucide } from "lucide-react";
+import { ActivityIcon, Link as LinkLucide } from "lucide-react";
 
 import { blogContext } from "@/context/blog-context";
 import {
@@ -17,6 +17,18 @@ import {
 import { cn } from "@/lib/utils";
 import { useSetIndicator } from "@/hooks/useSetIndicator";
 import { StaticImage, ImageContext } from "@/components/blog/image";
+import { CodeHighlighter, SupportedLanguages, SupportedLanguageType } from "@/components/blog/code-highlighter";
+
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel
+} from "@/components/ui/select";
+import { Button } from "../ui/button";
 
 export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
 export interface BlogComponentProps {
@@ -250,6 +262,103 @@ function LineGapBlock(props: BlogComponentProps) {
     )
 }
 
+function CodeBlock(props: BlogComponentProps) {
+    const SEPARATOR = '(---;;;---)';
+    const ref = useRef<HTMLDivElement>(null);
+    const [lang, data] = props.content.split(SEPARATOR);
+    const [code, setCode] = useState<string>(data ?? '');
+    const [language, setLanguage] = useState<SupportedLanguageType>(lang as SupportedLanguageType ?? 'typescript');
+    const [isPending, startTransition] = useTransition();
+    const { dispatch } = useContext(blogContext);
+    useSetIndicator(isPending);
+
+    useEffect(() => {
+        startTransition(async () => {
+            await updateBlogComponentAction({
+                ...props,
+                content: language + SEPARATOR + code
+            })
+        })
+    }, [code, language])
+
+    function deleteCode(){
+        startTransition(async () => {
+            deleteBlogComponentAction({
+                blogID: props.blogId,
+                componentID: props.id
+            }).then(d => {
+                if (d.error) throw new Error(d.error);
+
+                dispatch && dispatch({
+                    id: props.id,
+                    blogID: props.blogId,
+                    label: props.label,
+                    type: 'delete'
+                })
+            })
+        })
+    }
+
+    return (
+        <div
+            className={
+                cn(
+                    "space-y-3 relative w-full h-auto max-h-[300px] isolate group",
+                    props.isEditable && "mt-12"
+                )
+            }>
+
+            {
+                props.isEditable && (
+                    <div className="
+                        absolute z-10 opacity-25
+                        right-0 p-2
+                        flex items-center gap-2
+                        hover:opacity-100
+                    ">
+                        <Select
+                            onValueChange={e => setLanguage(e as SupportedLanguageType)}
+                            defaultValue={language}
+                        >
+                            <SelectTrigger className={"w-[180px]"}>
+                                <SelectValue placeholder={"Select a language"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Languages</SelectLabel>
+
+                                    {
+                                        SupportedLanguages.map(i => (
+                                            <SelectItem value={i} key={i}>{i}</SelectItem>
+                                        ))
+                                    }
+
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            variant={"destructive"}
+                            onClick={() => deleteCode()}
+                        >
+                            Remove
+                        </Button>
+                    </div>
+                )
+            }
+            
+            <CodeHighlighter
+                code={code}
+                setCode={setCode}
+                language={language}
+                isReadonly={!props.isEditable}
+            />
+
+        </div>
+    )
+}
+
+
 export function RenderBlock(block: BlogComponentProps) {
     switch (block.label) {
         case "title":
@@ -271,6 +380,10 @@ export function RenderBlock(block: BlogComponentProps) {
         case "line-gap":
             return (
                 <LineGapBlock key={block.id} {...block} />
+            )
+        case "code":
+            return (
+                <CodeBlock key={block.id} {...block} />
             )
 
         default: {
@@ -324,9 +437,9 @@ function useBlockRef(block: BlogComponentProps) {
                             componentID: block.id
                         }).then(
                             (data) => {
-                                if(data.success){
+                                if (data.success) {
                                     dispatch({ type: 'delete', id: block.id, label: block.label, blogID: block.blogId });
-                                }else{
+                                } else {
                                     throw new Error(data.error)
                                 }
                             }
@@ -353,6 +466,6 @@ function useBlockRef(block: BlogComponentProps) {
         }
     }, [block, dispatch])
 
-    
+
     return { blockRef, handleInput }
 }
