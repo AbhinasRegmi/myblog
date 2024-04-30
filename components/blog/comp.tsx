@@ -272,16 +272,16 @@ function CodeBlock(props: BlogComponentProps) {
     useSetIndicator(isPending);
     //TODO: code portion is always triggering updates no idea why.
 
-    let timer: any = null;
+    let timer = useRef<any>(null);
 
     useEffect(() => {
         if (!props.isEditable) return;
 
-        if (timer) {
-            clearTimeout(timer);
+        if (timer.current) {
+            clearTimeout(timer.current);
         }
 
-        timer = setTimeout(() => {
+        timer.current = setTimeout(() => {
             startTransition(async () => {
                 await updateBlogComponentAction({
                     ...props,
