@@ -264,24 +264,35 @@ function LineGapBlock(props: BlogComponentProps) {
 
 function CodeBlock(props: BlogComponentProps) {
     const SEPARATOR = '(---;;;---)';
-    const ref = useRef<HTMLDivElement>(null);
     const [lang, data] = props.content.split(SEPARATOR);
     const [code, setCode] = useState<string>(data ?? '');
     const [language, setLanguage] = useState<SupportedLanguageType>(lang as SupportedLanguageType ?? 'typescript');
     const [isPending, startTransition] = useTransition();
     const { dispatch } = useContext(blogContext);
     useSetIndicator(isPending);
+    //TODO: code portion is always triggering updates no idea why.
+
+    let timer: any = null;
 
     useEffect(() => {
-        startTransition(async () => {
-            await updateBlogComponentAction({
-                ...props,
-                content: language + SEPARATOR + code
-            })
-        })
-    }, [code, language])
+        if (!props.isEditable) return;
 
-    function deleteCode(){
+        if (timer) {
+            clearTimeout(timer);
+        }
+
+        timer = setTimeout(() => {
+            startTransition(async () => {
+                await updateBlogComponentAction({
+                    ...props,
+                    content: language + SEPARATOR + code
+                })
+            })
+        }, 400);
+
+    }, [props, code, language])
+
+    function deleteCode() {
         startTransition(async () => {
             deleteBlogComponentAction({
                 blogID: props.blogId,
@@ -346,7 +357,7 @@ function CodeBlock(props: BlogComponentProps) {
                     </div>
                 )
             }
-            
+
             <CodeHighlighter
                 code={code}
                 setCode={setCode}
