@@ -22,6 +22,7 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
                 case "image":
                 case "link":
                 case "line-gap":
+                case "code":
                     return [
                         ...state,
                         {

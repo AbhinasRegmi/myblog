@@ -33,7 +33,7 @@ export function ProfileHeader(props: ProfileHeaderProps) {
 
     return (
         <div className="pt-12 pb-6 flex items-center justify-between">
-            <h1 className="text-2xl flex items-center gap-2">
+            <h1 className="text-2xl flex items-center gap-3">
                 <ProfileAvatar imageUrl={props.imageUrl} />
                 <div className="line-clamp-1 w-[200px] md:w-full">
                     {props.name}
