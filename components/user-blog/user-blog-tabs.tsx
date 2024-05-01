@@ -21,6 +21,7 @@ export function UserBlogTabs() {
                 {
                     tabs.map(t => (
                         <TabsTrigger
+                            key={t}
                             value={t}
                             className={
                                 cn(
