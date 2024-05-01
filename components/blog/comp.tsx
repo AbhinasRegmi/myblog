@@ -315,7 +315,6 @@ function CodeBlock(props: BlogComponentProps) {
             className={
                 cn(
                     "space-y-3 relative w-full h-auto max-h-[300px] isolate group",
-                    props.isEditable && "mt-12"
                 )
             }>
 
