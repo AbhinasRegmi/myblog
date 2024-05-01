@@ -1,7 +1,7 @@
 import { ProfileSide } from "@/components/user/profile-side";
 import { ProfileHeader } from "@/components/user/profile-header";
 import { Separator } from "@/components/ui/separator";
-
+import {UserBlog} from "@/components/user-blog/user-blog";
 
 interface ProfileProps {
     name: string;
@@ -16,6 +16,8 @@ export function Profile(props: ProfileProps) {
                     <ProfileHeader {...props} />
                 </div>
                 <Separator />
+
+                <UserBlog />
             </div>
             <div className="w-[1px] bg-border hidden md:block"></div>
             <ProfileSide />
