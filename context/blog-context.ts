@@ -16,6 +16,19 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
             const blockID = crypto.randomUUID();
             const length = state.at(-1)?.position ?? 0;
 
+            if(length === 0){
+                return [
+                    {
+                        label: "title",
+                        content: "",
+                        id: blockID,
+                        position: length + 1,
+                        blogId: action.blogID,
+                        isEditable: true
+                    }
+                ]
+            }
+
             switch (action.label) {
                 case "title":
                 case "pararaph":
@@ -39,6 +52,10 @@ export function blogReducer(state: Array<BlogComponentProps>, action: BlogReduce
                     return state
             }
         case "delete":
+            if(action.label === 'title'){
+                return state
+            }
+
             if(action.id){
                 return state.filter(block => block.id !== action.id);
             }

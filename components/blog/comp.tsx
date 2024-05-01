@@ -440,6 +440,9 @@ function useBlockRef(block: BlogComponentProps) {
 
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === 'Backspace' && blockRef.current?.textContent === '') {
+
+                if(block.position === 1 && block.label === 'title') return;
+
                 if (dispatch) {
                     startTransition(async () => {
                         deleteBlogComponentAction({
