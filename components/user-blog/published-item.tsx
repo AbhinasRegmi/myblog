@@ -1,45 +1,37 @@
 "use client";
 
 import {
-    Pen,
-    Rocket,
-    Trash
+    Ban,
+    Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTransition } from 'react';
 
 import { ThreeDots, ThreeDotsPros } from "@/components/ui/three-dots";
-import { publishBlogAction, deleteSingleBlogAction } from '@/action/blog';
-import { NEW_BLOG_ROUTE } from "@/routes";
+import { publishBlogAction } from '@/action/blog';
+import { BlogDraftItemProps } from '@/components/user-blog/draft-item';
 import { cn } from '@/lib/utils';
+import { READ_BLOG_ROUTE } from '@/routes';
 
-export interface BlogDraftItemProps {
-    title: string;
-    userID: string;
-    blogID: string;
-}
-export function BlogDraftItem(props: BlogDraftItemProps) {
+
+export function BlogPublishedItem(props: BlogDraftItemProps) {
     const [isPending, startTransition] = useTransition();
 
-    function publishHandler(){
+    function unpublishHandler(){
         startTransition(async () => {
             const res = await publishBlogAction({
                 userID: props.userID,
-                blogID: props.blogID
+                blogID: props.blogID,
+                publish: false,
             })
 
             if(res?.error){
-                toast("Draft cannot be published.", {
-                    description: 'Please ensure the blog has proper title and contents.',
-                    dismissible: true
+                toast("Blog cannot be unpublished.", {
+                    description: 'Something went wrong.',
+                    cancel: true,
+                    dismissible: true,
                 })
             }
-        })
-    }
-
-    function deleteHandler(){
-        startTransition(async () => {
-            await deleteSingleBlogAction({blogID: props.blogID});
         })
     }
 
@@ -47,22 +39,16 @@ export function BlogDraftItem(props: BlogDraftItemProps) {
         label: 'Actions',
         content: [
             {
-                href: `${NEW_BLOG_ROUTE}?blogID=${props.blogID}`,
-                label: 'Continue editing',
-                icon: Pen
+                label: 'View live page',
+                icon: Eye,
+                href: READ_BLOG_ROUTE + props.blogID
             },
             {
-                label: 'Publish blog',
-                icon: Rocket,
-                handler: publishHandler
-            },
-            {
-                label: 'Delete blog',
+                label: 'Unpublish blog',
+                icon: Ban,
                 destructive: true,
-                icon: Trash,
-                handler: deleteHandler
-            }
-
+                handler: unpublishHandler
+            },
         ]
 
     } satisfies ThreeDotsPros;
@@ -78,15 +64,15 @@ export function BlogDraftItem(props: BlogDraftItemProps) {
             <div className="flex gap-3">
                 <span
                     className="
-                        text-sm text-background bg-orange-500 px-2 rounded-full
-                        flex items-center
+                        text-sm text-background bg-emerald-500 px-2 rounded-full
+                        flex items-center tracking-wide
                     "
-                >draft</span>
+                >live</span>
                 <h2
                     className="
                         font-medium tracking-wide line-clamp-1
                     "
-                >{props.title || 'Untitled blog'}</h2>
+                >{props.title}</h2>
             </div>
 
             <div>

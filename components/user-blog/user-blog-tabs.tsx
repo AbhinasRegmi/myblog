@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 export function UserBlogTabs() {
     //TODO: Add a better suspense boundary for tabs content.
+    //TODO: Drafts update bhayo bhane show blinking icon.
 
     const tabs = ["drafts", "published"] as const;
 

@@ -50,7 +50,7 @@ export function ThreeDots(props: ThreeDotsPros) {
                                 className="gap-2"
                                 onClick={i.handler}>
                                     
-                                {!!i.icon && <i.icon size={"16px"} color={i.destructive ? "red" : "black"} />}
+                                {!!i.icon && <i.icon size={"18px"} color={i.destructive ? "red" : "black"} />}
 
                                 <Link href={i.href ?? ''} className={cn(
                                     "w-full",

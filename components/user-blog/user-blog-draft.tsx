@@ -6,6 +6,8 @@ import { BlogDraftItem } from "@/components/user-blog/draft-item";
 
 export async function UserBlogDraft(){
 
+    //TODO: FIX the title will not updated since this page will not reload and older drafts
+    // will be seen.
     const session = await auth();
     if(!session?.user) return notFound();
 

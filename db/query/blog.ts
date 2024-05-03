@@ -1,4 +1,4 @@
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, not, exists } from "drizzle-orm";
 
 import { db } from "@/db/connection";
 import { blog, component } from "@/db/schemas/blog";
@@ -163,7 +163,7 @@ export async function deleteBlogComponent({ blogID, componentID }: { blogID: str
         );
 }
 
-export async function getAllDraftBlogs({ userID, page = 0, limit = 10 }: { userID: string, limit?: number, page?: number }) {
+export async function getAllDraftBlogs({ userID, page = 0, limit = 10, isPublished = false }: { userID: string, limit?: number, page?: number, isPublished?: boolean }) {
     const res = await db.select({
         id: blog.id,
         userID: blog.user_id,
@@ -178,10 +178,47 @@ export async function getAllDraftBlogs({ userID, page = 0, limit = 10 }: { userI
         ))
         .where(and(
             eq(blog.user_id, userID),
-            eq(blog.status, 'DRAFT')
+            eq(blog.status, isPublished ? 'PUBLISHED' : 'DRAFT')
         ))
         .limit(limit)
         .offset(page);
 
     return res;
+}
+
+export async function publishDraftBlog({userID, blogID, publish = true}: {userID: string, blogID: string, publish?: boolean}){
+    
+    const sq = db.select()
+    .from(component)
+    .where(and(
+        eq(component.blog_id, blogID),
+        eq(component.position, 1),
+        eq(component.type, 'title'),
+        not(eq(component.content, '')),
+    )).limit(1)
+
+   
+    const res = await db.update(blog)
+    .set({
+        status: publish ? 'PUBLISHED' : 'DRAFT'
+    }).where(and(
+        exists(sq),
+        eq(blog.id, blogID),
+        eq(blog.user_id, userID),
+    )).returning({
+        id: blog.id
+    })
+
+    if(!res.length){
+        throw new Error('No response.')
+    }
+}
+
+export async function deleteDraftBlog({userID, blogID}: {userID: string, blogID: string}){
+    await db.delete(blog)
+    .where(and(
+        eq(blog.id, blogID),
+        eq(blog.user_id, userID),
+        eq(blog.status, 'DRAFT')
+    ))
 }
