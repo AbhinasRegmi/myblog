@@ -75,7 +75,7 @@ export function AddContent() {
 
 
             <CommandDialog open={open} onOpenChange={setOpen} styles="-translate-y-[92%] md:-translate-y-1/2 min-h-[350px]">
-                <CommandInput placeholder="Type a component name  or search..." />
+                <CommandInput placeholder="Type a component name  (Ctrl + k)" />
                 <CommandList>
                     <CommandEmpty>No such component found.</CommandEmpty>
                     <CommandGroup heading="Components">
