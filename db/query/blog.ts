@@ -202,7 +202,6 @@ export async function getAllDraftBlogs({ userID, page = 0, limit = 10, isPublish
     const res = await db.select({
         id: blog.id,
         userID: blog.user_id,
-        cover: blog.cover,
         title: component.content
     })
         .from(blog)
