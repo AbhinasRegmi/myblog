@@ -71,9 +71,9 @@ export async function getSingleBlogDraft({ blogID, userID }: { blogID: string, u
             component
         }).from(blog).where(
             and(
+                eq(blog.status, "DRAFT"),
                 eq(blog.user_id, userID),
                 eq(blog.id, blogID),
-                eq(blog.status, "DRAFT")
             )
         ).innerJoin(component, eq(component.blog_id, blog.id))
             .orderBy(component.position);
@@ -90,7 +90,7 @@ export async function getSingleBlogDraft({ blogID, userID }: { blogID: string, u
 
 export async function checkBlogExists({ blogID, userID }: { blogID: string, userID: string }) {
     try {
-        const res = await db.select({
+        const [a] = await db.select({
             blogID: blog.id,
         }).from(blog).where(
             and(
@@ -100,7 +100,7 @@ export async function checkBlogExists({ blogID, userID }: { blogID: string, user
             )
         );
 
-        return true;
+        return !!a
 
     } catch {
         return false;
@@ -117,7 +117,14 @@ export async function createNewBlog({ userID }: { userID: string }) {
 export async function createSingleBlogDraft({ userID }: { userID: string }) {
     const res = await db.select({
         blogID: blog.id
-    }).from(blog).leftJoin(component, eq(blog.id, component.blog_id)).where(and(isNull(component.blog_id), eq(blog.user_id, userID)));
+    })
+        .from(blog)
+        .leftJoin(component, eq(blog.id, component.blog_id))
+        .where(
+            and(
+                isNull(component.blog_id), eq(blog.user_id, userID)
+            )
+        );
 
     if (!res.length) {
         const res_ = await db.insert(blog).values({ user_id: userID }).returning({ id: blog.id });
@@ -132,35 +139,63 @@ export async function createSingleBlogDraft({ userID }: { userID: string }) {
     return { blogID: res[0].blogID }
 }
 
-export async function updateBlogComponent({ block }: { block: BlogComponentProps }) {
+export async function updateBlogComponent({ block, userID }: { block: BlogComponentProps, userID: string }) {
 
-    const res = await db.update(component).set({
-        content: block.content,
-        position: block.position
-    }).where(
-        and(eq(component.id, block.id), eq(component.blog_id, block.blogId))
-    ).returning({ id: component.id });
+    await db.transaction(async (tx) => {
+        const [a] = await tx.select().from(blog).where(and(
+            eq(blog.user_id, userID),
+            eq(blog.status, 'DRAFT'),
+            eq(blog.id, block.blogId)
+        )).limit(1)
 
-    if (!res.length) {
-        await db.insert(component).values({
-            id: block.id,
-            blog_id: block.blogId,
+        if (!a) {
+            tx.rollback()
+        }
+
+        const [b] = await tx.update(component).set({
             content: block.content,
-            type: block.label,
-            position: block.position,
-        });
-    }
+            position: block.position
+        })
+            .where(
+                and(eq(component.id, block.id),
+                    eq(component.blog_id, block.blogId))
+            )
+            .returning({ id: component.id });
 
+        if (!b) {
+            await tx.insert(component).values({
+                id: block.id,
+                blog_id: block.blogId,
+                content: block.content,
+                type: block.label,
+                position: block.position,
+            });
+        }
+    })
 }
 
-export async function deleteBlogComponent({ blogID, componentID }: { blogID: string, componentID: string }) {
-    await db.delete(component)
-        .where(
+export async function deleteBlogComponent({ blogID, componentID, userID }: { blogID: string, componentID: string, userID: string }) {
+    await db.transaction(async tx => {
+        const [a] = await tx.select().from(blog).where(
             and(
-                eq(component.id, componentID),
-                eq(component.blog_id, blogID)
+                eq(blog.id, blogID),
+                eq(blog.user_id, userID),
+                eq(blog.status, 'DRAFT')
             )
-        );
+        )
+
+        if (!a) {
+            tx.rollback();
+        }
+
+        await tx.delete(component)
+            .where(
+                and(
+                    eq(component.id, componentID),
+                    eq(component.blog_id, blogID)
+                )
+            )
+    })
 }
 
 export async function getAllDraftBlogs({ userID, page = 0, limit = 10, isPublished = false }: { userID: string, limit?: number, page?: number, isPublished?: boolean }) {
@@ -186,39 +221,65 @@ export async function getAllDraftBlogs({ userID, page = 0, limit = 10, isPublish
     return res;
 }
 
-export async function publishDraftBlog({userID, blogID, publish = true}: {userID: string, blogID: string, publish?: boolean}){
-    
+export async function publishDraftBlog({ userID, blogID, publish = true }: { userID: string, blogID: string, publish?: boolean }) {
+
     const sq = db.select()
-    .from(component)
-    .where(and(
-        eq(component.blog_id, blogID),
-        eq(component.position, 1),
-        eq(component.type, 'title'),
-        not(eq(component.content, '')),
-    )).limit(1)
+        .from(component)
+        .where(and(
+            eq(component.blog_id, blogID),
+            eq(component.position, 1),
+            eq(component.type, 'title'),
+            not(eq(component.content, '')),
+        )).limit(1)
 
-   
+
     const res = await db.update(blog)
-    .set({
-        status: publish ? 'PUBLISHED' : 'DRAFT'
-    }).where(and(
-        exists(sq),
-        eq(blog.id, blogID),
-        eq(blog.user_id, userID),
-    )).returning({
-        id: blog.id
-    })
+        .set({
+            status: publish ? 'PUBLISHED' : 'DRAFT'
+        }).where(and(
+            exists(sq),
+            eq(blog.id, blogID),
+            eq(blog.user_id, userID),
+        )).returning({
+            id: blog.id
+        })
 
-    if(!res.length){
+    if (!res.length) {
         throw new Error('No response.')
     }
 }
 
-export async function deleteDraftBlog({userID, blogID}: {userID: string, blogID: string}){
+export async function deleteDraftBlog({ userID, blogID }: { userID: string, blogID: string }) {
     await db.delete(blog)
-    .where(and(
-        eq(blog.id, blogID),
-        eq(blog.user_id, userID),
-        eq(blog.status, 'DRAFT')
-    ))
+        .where(and(
+            eq(blog.id, blogID),
+            eq(blog.user_id, userID),
+            eq(blog.status, 'DRAFT')
+        ))
+}
+
+export async function getSinglePublishedBlog({ blogID }: { blogID: string }) {
+    try {
+        const res = await db.select({
+            blogID: blog.id,
+            component
+        }).from(blog)
+            .where(
+                and(
+                    eq(blog.id, blogID),
+                    eq(blog.status, 'PUBLISHED')
+                )
+            )
+            .innerJoin(
+                component, eq(component.blog_id, blog.id)
+            ).orderBy(component.position)
+
+        if (res.length) {
+            return res
+        }
+
+        return null;
+    } catch (e) {
+        return null;
+    }
 }

@@ -29,6 +29,7 @@ import {
     SelectLabel
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
+import { blog } from "@/db/schemas";
 
 export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
 export interface BlogComponentProps {
@@ -120,12 +121,12 @@ function LinkBlock(props: BlogComponentProps) {
 
 
     useEffect(() => {
-        if (!props.isEditable) return;
-
+        
         const ref = linkRef.current;
-
+        
         function keyHandler(event: KeyboardEvent) {
             if (!ref) return;
+            if (!props.isEditable) return;
 
             if (event.key === 'Backspace' && ref.textContent === '') {
 
@@ -170,6 +171,7 @@ function LinkBlock(props: BlogComponentProps) {
             }
         }
 
+        if(!props.isEditable) return;
         ref?.addEventListener('keydown', keyHandler);
 
         return () => {
@@ -178,14 +180,14 @@ function LinkBlock(props: BlogComponentProps) {
     }, [props, dispatch])
 
     return (
-        <div className="inline gap-1 items-center">
+        <div className="inline-flex gap-1 items-center w-fit">
             <a
                 ref={linkRef}
                 target="_blank"
                 contentEditable={props.isEditable ?? false}
                 onInput={e => inputHandler(e.currentTarget.textContent ?? '')}
                 className={cn(
-                    "focus:outline-none text-lg underline after:opacity-50 inline-flex",
+                    "focus:outline-none text-lg underline after:opacity-50 inline-flex w-fit",
                     !!!props.content && !isHref && "empty:after:content-['Enter_label_for_link']",
                     !!!props.content && isHref && "empty:after:content-['Enter_link_and_press_enter']"
                 )}
@@ -193,7 +195,7 @@ function LinkBlock(props: BlogComponentProps) {
 
             </a>
             {
-                !isHref && <LinkLucide size={16} className="text-muted-foreground inline" />
+                !isHref && <LinkLucide size={16} className="text-muted-foreground inline-flex w-fit" />
             }
         </div>
     )
@@ -436,14 +438,13 @@ function useBlockRef(block: BlogComponentProps) {
 
     useEffect(() => {
 
-        if (!block.isEditable) return;
-
+        
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === 'Backspace' && blockRef.current?.textContent === '') {
-
+                
                 if(block.position === 1 && block.label === 'title') return;
-
-                if (dispatch) {
+                
+                if (dispatch && block.isEditable) {
                     startTransition(async () => {
                         deleteBlogComponentAction({
                             blogID: block.blogId,
@@ -461,19 +462,21 @@ function useBlockRef(block: BlogComponentProps) {
                 }
             }
         }
-
+        
         const current = blockRef.current;
-
-        current?.addEventListener('keydown', handleKeyDown);
-
+        
+        
         if (current?.textContent === '') {
             current.textContent = block.content;
         }
-
+        
         if (!block.content) {
             current?.focus();
         }
-
+        
+        if (!block.isEditable) return;
+        current?.addEventListener('keydown', handleKeyDown);
+        
         return () => {
             current?.removeEventListener("keydown", handleKeyDown);
         }

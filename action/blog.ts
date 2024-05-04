@@ -7,11 +7,11 @@ import { BlogComponentProps } from "@/components/blog/comp";
 import { PROFILE_ROUTE } from "@/routes";
 import { auth } from "@/auth";
 
-/** This function is not secure. Use only if user identity is verified. */
 export async function updateBlogComponentAction(blog: BlogComponentProps){
 
     try{
-        await updateBlogComponent({block: blog})
+        const userID = await getUserID();
+        await updateBlogComponent({block: blog, userID})
 
         return {success: "Component created successfully."}
     }catch(e){
@@ -19,11 +19,10 @@ export async function updateBlogComponentAction(blog: BlogComponentProps){
     }
 }
 
-/** This function is not secure. Use only if user identity is verified. */
 export async function deleteBlogComponentAction({blogID, componentID}: {blogID: string, componentID: string}){
     try{
-
-        await deleteBlogComponent({blogID, componentID});
+        const userID = await getUserID();
+        await deleteBlogComponent({blogID, componentID, userID});
 
         return {success: "Component deleted successfully."}
     }catch(e){
@@ -31,10 +30,10 @@ export async function deleteBlogComponentAction({blogID, componentID}: {blogID: 
     }
 }
 
-/** This function is not secure. Use only if user identity is verified. */
-export async function publishBlogAction(props: {blogID: string, userID: string, publish?: boolean}){
+export async function publishBlogAction(props: {blogID: string, publish?: boolean}){
     try{
-        await publishDraftBlog({...props});
+        const userID = await getUserID();
+        await publishDraftBlog({...props, userID});
         revalidatePath(PROFILE_ROUTE);
 
     }catch(e){
@@ -48,17 +47,9 @@ export async function publishBlogAction(props: {blogID: string, userID: string, 
 }
 
 export async function deleteSingleBlogAction(props: {blogID: string}){
-    const session = await auth();
-
-    const userID = session?.user?.id;
-
-    if(!userID){
-        return {
-            error: "Something went wrong."
-        }
-    }
-
     try{
+
+        const userID = await getUserID();
         await deleteDraftBlog({userID, ...props})
         revalidatePath(PROFILE_ROUTE)
     }catch{
@@ -68,4 +59,16 @@ export async function deleteSingleBlogAction(props: {blogID: string}){
     }
 
 
+}
+
+async function getUserID(){
+    const session = await auth();
+
+    const userID = session?.user?.id;
+
+    if(!userID){
+        throw new Error();
+    }
+
+    return userID
 }
