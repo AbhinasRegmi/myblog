@@ -1,8 +1,11 @@
-import { eq, and, isNull, not, exists } from "drizzle-orm";
+import { eq, and, isNull, not, exists, or, min, inArray } from "drizzle-orm";
 
 import { db } from "@/db/connection";
 import { blog, component } from "@/db/schemas/blog";
 import { BlogComponentProps } from "@/components/blog/comp";
+import { users } from "../schemas";
+import { alias } from "drizzle-orm/pg-core";
+import { title } from "process";
 
 export async function searchBlogs({ search, page }: { search?: string, page?: number }) {
     //TODO: fetch actual data
@@ -281,4 +284,49 @@ export async function getSinglePublishedBlog({ blogID }: { blogID: string }) {
     } catch (e) {
         return null;
     }
+}
+
+export async function getAllPublishedBlog({ page = 0, limit = 10 }: { page?: number, limit?: number }) {
+
+    const al = alias(component, 'al');
+    const sq = db.select({
+        position: min(component.position)
+    }).from(component)
+        .where(
+            and(
+                eq(component.type, 'image')
+            )
+        ).groupBy(component.blog_id);
+
+
+    const res = await db.select({
+        blogID: blog.id,
+        published_at: blog.published_at,
+        author: users.name,
+        profile: users.image,
+        cover: component.content,
+        title: al.content
+    })
+        .from(blog)
+        .leftJoin(component, and(
+            eq(blog.id, component.blog_id),
+        ))
+        .innerJoin(al, and(
+            eq(blog.id, al.blog_id),
+        ))
+        .where(
+            and(
+                eq(blog.status, "PUBLISHED"),
+                eq(al.position, 1),
+                eq(al.type, 'title'),
+                eq(component.type, 'image'),
+                inArray(component.position, sq)
+            )
+        )
+        .innerJoin(users, eq(blog.user_id, users.id))
+        .limit(limit)
+        .offset(page)
+        .orderBy(blog.published_at)
+
+    return res
 }

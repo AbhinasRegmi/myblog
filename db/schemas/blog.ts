@@ -14,7 +14,7 @@ export const STATUS = pgEnum("status", ["PUBLISHED", "DRAFT", "SUSPENDED"])
 
 export const blog = pgTable("blog_myblog", {
     id: uuid("id").defaultRandom().primaryKey(),
-    published_at: timestamp("published_at").defaultNow().$onUpdate(() => new Date()),
+    published_at: timestamp("published_at").defaultNow().notNull().$onUpdate(() => new Date()),
     status: STATUS("status").default("DRAFT"),
     user_id: text("user_id").notNull().references(
         () => users.id,
