@@ -24,7 +24,6 @@ export function BlogDraftItem(props: BlogDraftItemProps) {
     function publishHandler(){
         startTransition(async () => {
             const res = await publishBlogAction({
-                userID: props.userID,
                 blogID: props.blogID
             })
 
