@@ -309,7 +309,9 @@ export async function getAllPublishedBlog({ page = 0, limit = 10 }: { page?: num
     })
         .from(blog)
         .leftJoin(component, and(
+            eq(component.type, 'image'),
             eq(blog.id, component.blog_id),
+            inArray(component.position, sq),
         ))
         .innerJoin(al, and(
             eq(blog.id, al.blog_id),
@@ -319,8 +321,6 @@ export async function getAllPublishedBlog({ page = 0, limit = 10 }: { page?: num
                 eq(blog.status, "PUBLISHED"),
                 eq(al.position, 1),
                 eq(al.type, 'title'),
-                eq(component.type, 'image'),
-                inArray(component.position, sq)
             )
         )
         .innerJoin(users, eq(blog.user_id, users.id))

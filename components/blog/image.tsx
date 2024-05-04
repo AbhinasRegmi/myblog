@@ -130,7 +130,7 @@ function ImagePlaceholder() {
     )
 }
 
-export function StaticImage({ publicUrl, data }: { publicUrl: string, data: BlogComponentProps }) {
+export function StaticImage({ publicUrl, data}: { publicUrl: string, data: BlogComponentProps }) {
     const { width } = useWindowDimensions();
     const [isPending, startTransition] = useTransition();
 
@@ -150,6 +150,18 @@ export function StaticImage({ publicUrl, data }: { publicUrl: string, data: Blog
             width={width ?? 1000}
             height={1000}
             className="object-cover w-full h-auto"
+        />
+    )
+}
+
+export function BlogThumbnailImage({publicUrl}: {publicUrl: string}){
+    return (
+        <CldImage
+            alt="Abhinas Regmi's myBlog"
+            src={publicUrl}
+            width={100}
+            height={100}
+            className="object-cover w-full h-full"
         />
     )
 }

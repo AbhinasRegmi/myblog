@@ -8,10 +8,12 @@ export default async function FindPage(props: {
 }){
 
     //TODO: limit and page from url extract garnw xa
-    const data = await searchBlogs({
-        search: props?.searchParams?.search ?? "",
-        page: 1
-    })
+    const data = [
+        {
+            title: 'Search functionality is not ready yet.',
+            id: ''
+        }
+    ]
 
     return (
         <Find data={data} />
