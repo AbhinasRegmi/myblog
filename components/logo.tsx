@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import LogoSVG from "@/public/images/logo.svg";
+import LogoSVG from "../public/images/logo.svg";
 
 export async function Logo() {
     //TODO: Background Burn image white bg is blocking view.
@@ -17,7 +17,5 @@ export async function Logo() {
                 className="h-[80px] w-[250px] object-cover"
             />
         </Link>
-
-
     )
 }
