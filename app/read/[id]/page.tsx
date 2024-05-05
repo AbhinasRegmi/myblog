@@ -27,8 +27,6 @@ export default async function ReadPage({params}: {
         } satisfies BlogComponentProps
     ))
 
-    console.log(components)
-
     return (
         <div>
             <ReadBoard data={components} />
