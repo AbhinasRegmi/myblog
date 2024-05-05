@@ -1,5 +1,6 @@
 import {Find} from "@/components/find";
 import {searchBlogs} from "@/db/query/blog";
+import { Suspense } from "react";
 
 export default async function FindPage(props: {
     searchParams? : {
@@ -7,15 +8,11 @@ export default async function FindPage(props: {
     }
 }){
 
-    //TODO: limit and page from url extract garnw xa
-    const data = [
-        {
-            title: 'Search functionality is not ready yet.',
-            id: ''
-        }
-    ]
+    const data = await searchBlogs({search: props.searchParams?.search});
 
     return (
-        <Find data={data} />
+        <Suspense fallback={'searching...'}>
+            <Find data={data} />
+        </Suspense>
     )
 }

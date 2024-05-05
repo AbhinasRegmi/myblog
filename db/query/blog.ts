@@ -4,28 +4,36 @@ import { db } from "@/db/connection";
 import { blog, component } from "@/db/schemas/blog";
 import { BlogComponentProps } from "@/components/blog/comp";
 import { users } from "../schemas";
-import { alias, pgTable, text, real, uuid } from "drizzle-orm/pg-core";
+import { alias} from "drizzle-orm/pg-core";
 import postgres from "postgres";
 
 
 function parseSearchOutput(rows: postgres.RowList<Record<string, unknown>[]>){
-    rows.map(i => {
+    return rows.map(i => {
         const data = Object.values(i).at(-1);
 
-        if(typeof data !== 'string') throw new Error('Cannot parse the output')
-        const [f, s, t] = data.split(',')
+        if(typeof data !== 'string') throw new Error('Cannot parse the sql output');
+        const [f, s] = data.substring(1, data.length - 1).split(`",`);
+        if(!f || !s) throw new Error('Cannot parse the sql output.')
+        const title = f.substring(1);
+        const [id, _] = s.split(',');
+
+        return {
+            title, id
+        }
     })
 }
 
 export async function searchBlogs({ search, page }: { search?: string, page?: number }) {
     if(search){
-        
         const res = await db.execute(
             sql.raw(`select full_text_search('${search}') as d;`)    
         );
 
-        const res_clean = parseSearchOutput(res);
+        return parseSearchOutput(res);
     }
+
+    return []
 }
 
 export async function getSingleBlogDraft({ blogID, userID }: { blogID: string, userID: string }) {
@@ -291,4 +299,4 @@ export async function getAllPublishedBlog({ page = 0, limit = 10 }: { page?: num
         .orderBy(blog.published_at)
 
     return res;
-    }
+}
