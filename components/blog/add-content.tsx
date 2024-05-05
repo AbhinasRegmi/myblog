@@ -47,7 +47,7 @@ export function AddContent() {
             name: "Image"
         },
         {
-            label: "pararaph",
+            label: "paragraph",
             name: "Paragraph"
         },
         {

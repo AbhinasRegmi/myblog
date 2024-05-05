@@ -29,9 +29,8 @@ import {
     SelectLabel
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
-import { blog } from "@/db/schemas";
 
-export type BlogLabels = "title" | "image" | "pararaph" | "link" | "code" | "line-gap";
+export type BlogLabels = "title" | "image" | "paragraph" | "link" | "code" | "line-gap";
 export interface BlogComponentProps {
     label: BlogLabels;
     content: string;
@@ -377,7 +376,7 @@ export function RenderBlock(block: BlogComponentProps) {
             return (
                 <TitleBlock key={block.id} {...block} />
             )
-        case "pararaph":
+        case "paragraph":
             return (
                 <ParagraphBlock key={block.id} {...block} />
             )
