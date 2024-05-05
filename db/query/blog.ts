@@ -1,69 +1,31 @@
-import { eq, and, isNull, not, exists, or, min, inArray } from "drizzle-orm";
+import { eq, and, isNull, not, exists, min, inArray,sql } from "drizzle-orm";
 
 import { db } from "@/db/connection";
 import { blog, component } from "@/db/schemas/blog";
 import { BlogComponentProps } from "@/components/blog/comp";
 import { users } from "../schemas";
-import { alias } from "drizzle-orm/pg-core";
-import { title } from "process";
+import { alias, pgTable, text, real, uuid } from "drizzle-orm/pg-core";
+import postgres from "postgres";
+
+
+function parseSearchOutput(rows: postgres.RowList<Record<string, unknown>[]>){
+    rows.map(i => {
+        const data = Object.values(i).at(-1);
+
+        if(typeof data !== 'string') throw new Error('Cannot parse the output')
+        const [f, s, t] = data.split(',')
+    })
+}
 
 export async function searchBlogs({ search, page }: { search?: string, page?: number }) {
-    //TODO: fetch actual data
+    if(search){
+        
+        const res = await db.execute(
+            sql.raw(`select full_text_search('${search}') as d;`)    
+        );
 
-    const fakeData = [
-        {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        },
-        {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        }, {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        }, {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        }, {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        }, {
-            title: "This is amazing title", id: "first"
-        },
-        {
-            title: "This is good", id: "second"
-        },
-        {
-            title: "This is thinking good.", id: "third"
-        },
-    ]
-
-    return fakeData.splice(0, 6)
+        const res_clean = parseSearchOutput(res);
+    }
 }
 
 export async function getSingleBlogDraft({ blogID, userID }: { blogID: string, userID: string }) {
@@ -328,5 +290,5 @@ export async function getAllPublishedBlog({ page = 0, limit = 10 }: { page?: num
         .offset(page)
         .orderBy(blog.published_at)
 
-    return res
-}
+    return res;
+    }
