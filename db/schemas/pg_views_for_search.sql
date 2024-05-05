@@ -10,8 +10,7 @@ component_myblog as c
 on b.id = c.blog_id
 where
 c.type = 'title' and
-c.number = 1 and
-b.status = 'PUBLISHED';
+c.number = 1;
 
 create or replace
 view
@@ -24,7 +23,6 @@ inner join
 component_myblog as c
 on b.id = c.blog_id
 where
-b.status = 'PUBLISHED' and
 c.id in (
   select cc.id 
   from component_myblog as cc 

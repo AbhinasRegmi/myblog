@@ -4,8 +4,11 @@ add column if not exists search_idx tsvector;
 
 create or replace function update_search_idx() returns trigger as $$
   begin
-    new.search_idx := setweight(to_tsvector(coalesce((select title from search_myblog where id = new.id), '')), 'A') || setweight(to_tsvector(coalesce((select body from search_myblog where id = new.id), '')), 'B');
+    if new.id is null then
+      raise exception 'Id cannot be null';
+    end if;
 
+    new.search_idx := setweight(to_tsvector(coalesce((select title from search_myblog as s where s.id = new.id ), '')), 'A') || setweight(to_tsvector(coalesce((select body from search_myblog as s where s.id = new.id ), '')), 'B');
     return new;
   end;
 $$ language plpgsql;
