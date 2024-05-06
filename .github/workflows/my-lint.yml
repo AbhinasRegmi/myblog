@@ -1,6 +1,8 @@
 name: mylint
 
-on: push
+on:
+  - pull_request
+  - push
 
 jobs:
   lint:
