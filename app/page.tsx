@@ -6,7 +6,6 @@ export default async function RootPage() {
   const reverse_res = res.reverse();
   //TODO: datetime field fixes required.
 
-  let person: string = 12;
 
   return (
     <div className="bg-slate-50/10">
